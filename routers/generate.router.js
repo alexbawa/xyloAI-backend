@@ -8,15 +8,10 @@ GenerateRouter.use(express.json());
 //         This method generates a list of songs via 
 //         OpenAI's DaVinci model based on req.body.options 
 GenerateRouter.post("/", async (req, res) => {
-    if(!req.body.options) {
-        res.status(401).send("No configuration options sent.");
-    } else {
-        try {
-            let resultSongs = await generateSongs(req.body.options);
-            res.status(200).send(resultSongs);
-        } catch (err) {
-            res.status(500).send(err);
-        }
+    try {
+        await generateSongs(req, res);
+    } catch (err) {
+        res.status(500).send(err);
     }
 })
 

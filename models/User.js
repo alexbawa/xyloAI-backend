@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Playlist = require("./Playlist").schema;
 
-MAX_FREE_DRAFTS = 2;
-MAX_FREE_PUBLISHED = 1;
+
+const MAX_FREE_DRAFTS = 2;
+const MAX_FREE_PUBLISHED = 1;
 
 let User = new Schema({
     spotify_email: {type: String, required: true, index: {unique: true}},
@@ -10,6 +12,8 @@ let User = new Schema({
     published_count: {type: Number, default: 0},
     permitted_drafts: {type: Number, default: MAX_FREE_DRAFTS},
     permitted_published: {type: Number, default: MAX_FREE_PUBLISHED},
+    drafts: {type: [Playlist], default: []},
+    published: {type: [String], default: []}, // by Spotify ID of playlists
 })
 
 module.exports = {
