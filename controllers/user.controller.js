@@ -8,6 +8,7 @@ const createUser = async (req, res) => {
     } else {
         const user = new User({spotify_email})
         await user.save();
+
         res.status(201).send(user);
     }
     
@@ -17,6 +18,38 @@ const getUser = async (req, res) => {
     let user = await User.findById(req.params.userID);
     if(user) {
         res.status(200).send(user);
+    } else {
+        res.status(404).send("No user found.");
+    }
+}
+
+const userAddDrafts = async (req, res) => {
+    let user = await User.findById(req.params.userID);
+    if(user) {
+        if(req.body.increment) {
+            user.permitted_drafts += req.body.increment;
+            await user.save()
+
+            res.status(200).send();
+        } else {
+            res.status(404).send("No increment specified.");
+        }
+    } else {
+        res.status(404).send("No user found.");
+    }
+}
+
+const userAddPublished = async (req, res) => {
+    let user = await User.findById(req.params.userID);
+    if(user) {
+        if(req.body.increment) {
+            user.permitted_published += req.body.increment;
+            await user.save()
+
+            res.status(200).send();
+        } else {
+            res.status(404).send("No increment specified.");
+        }
     } else {
         res.status(404).send("No user found.");
     }
