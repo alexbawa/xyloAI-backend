@@ -15,7 +15,11 @@ GenerateRouter.post("/", async (req, res) => {
             let resultSongs = await generateSongs(req.body.options);
             res.status(200).send(resultSongs);
         } catch (err) {
-            res.status(500).send(err);
+            if(err.message) {
+                res.status(err.code).send(err.message);
+            } else {
+                res.status(500).send(err);
+            }
         }
     }
 })
