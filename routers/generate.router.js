@@ -3,6 +3,10 @@ const { generateSongs }  = require("../controllers/generate.controller");
 const GenerateRouter = express.Router();
 GenerateRouter.use(express.json());
 
+
+// method: POST
+//         This method generates a list of songs via 
+//         OpenAI's DaVinci model based on req.body.options 
 GenerateRouter.post("/", async (req, res) => {
     if(!req.body.options) {
         res.status(401).send("No configuration options sent.");
