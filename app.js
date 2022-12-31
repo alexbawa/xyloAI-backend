@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const express = require("express");
 const { Router } = require("./routers/root.router");
 
@@ -10,5 +11,8 @@ app.use(express.json());
 app.use("/api", Router);
 
 app.listen(PORT, () => {
-    console.log(`Server starting @ PORT ${PORT}`);
+    mongoose.set('strictQuery', false);
+    mongoose.connect(process.env.MONGODB_URL, () => {
+        console.log(`Server starting @ PORT ${PORT}`);
+    });
 });
