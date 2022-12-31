@@ -18,7 +18,7 @@ const queryFromSongs = async (options) => {
         songsIncluded = true;
     }
 
-    queryString += ` Give me ${options.count} songs`;
+    queryString += ` Give me ${options.count} real songs`;
 
     if(options.era) {
         queryString += ` that are from the ${options.era} era`;
