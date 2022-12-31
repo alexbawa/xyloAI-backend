@@ -1,4 +1,5 @@
 const { Configuration, OpenAIApi } = require("openai");
+const { SONG_DELIMITER } = require("../constants");
 const dotenv = require('dotenv');
 dotenv.config()
 
@@ -7,7 +8,7 @@ const config = new Configuration({
 });
 const OpenAI = new OpenAIApi(config);
 
-const listFormat = "'Song Title' by Artist; 'Song Title' by Artist; etc.";
+const listFormat = `'Song Title' by Artist${SONG_DELIMITER}'Song Title' by Artist${SONG_DELIMITER}etc.`;
 
 const queryFromSongs = async (options) => {
     let queryString = "";
