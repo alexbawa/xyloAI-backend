@@ -7,6 +7,7 @@ const {
     createPlaylist,
     playlistAddSongs,
     playlistChangeName,
+    publishPlaylist,
 }  = require("../controllers/user.controller");
 const UserRouter = express.Router();
 UserRouter.use(express.json());
@@ -84,6 +85,18 @@ UserRouter.put("/:userID/playlist/:playlistID/changeName", async (req, res) => {
     try {
         await playlistChangeName(req, res)
     } catch (err) {
+        res.status(500).send(err);
+    }
+})
+
+// method: PUT
+//         This method publishes a Playlist to Spotify
+//         and increments User's published_count
+UserRouter.put("/:userID/playlist/:playlistID/publish", async (req, res) => {
+    try {
+        await publishPlaylist(req, res)
+    } catch (err) {
+        console.log(err);
         res.status(500).send(err);
     }
 })

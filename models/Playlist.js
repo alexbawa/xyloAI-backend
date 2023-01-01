@@ -7,6 +7,5 @@ let Playlist = new Schema({
 })
 
 module.exports = {
-    model: mongoose.models.Playlist || mongoose.model("Playlist", Playlist),
     schema: Playlist,
 }

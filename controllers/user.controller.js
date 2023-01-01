@@ -1,5 +1,5 @@
 const User = require("../models/User").model;
-//const Playlist = require("../models/Playlist").model;
+const { publishToSpotify } = require("../integrations/spotify");
 
 const createUser = async (req, res) => {
     const spotify_email = req.body.spotify_email;
@@ -119,6 +119,32 @@ const playlistChangeName = async (req, res) => {
     }
 }
 
+const publishPlaylist = async (req, res) => {
+    let user = await User.findById(req.params.userID);
+    if(user) {
+        if(user.published_count < user.permitted_published) {
+            let playlistIndex = user.drafts.findIndex(draft => {
+                return draft._id == req.params.playlistID
+            });
+            if(playlistIndex > -1) {
+                publishToSpotify(user.drafts[playlistIndex]);
+
+                user.drafts.splice(playlistIndex);
+                user.published_count += 1;
+                await user.save();
+    
+                res.status(200).send();
+            } else {
+                res.status(404).send("No playlist found.");
+            }
+        } else {
+            res.status(403).send("User has no published remaining.");
+        }
+    } else {
+        res.status(404).send("No user found.");
+    }
+}
+
 module.exports = {
     createUser,
     getUser,
@@ -127,4 +153,5 @@ module.exports = {
     createPlaylist,
     playlistAddSongs,
     playlistChangeName,
+    publishPlaylist,
 }
