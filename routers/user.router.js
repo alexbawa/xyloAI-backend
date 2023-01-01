@@ -5,6 +5,8 @@ const {
     userAddDrafts,
     userAddPublished,
     createPlaylist,
+    playlistAddSongs,
+    playlistChangeName,
 }  = require("../controllers/user.controller");
 const UserRouter = express.Router();
 UserRouter.use(express.json());
@@ -21,7 +23,7 @@ UserRouter.post("/", async (req, res) => {
 })
 
 // method: GET
-//         This method get a User from MongoDB
+//         This method gets a User from MongoDB
 UserRouter.get("/:userID", async (req, res) => {
     try {
         await getUser(req, res)
@@ -31,8 +33,8 @@ UserRouter.get("/:userID", async (req, res) => {
 })
 
 // method: PUT
-//         This method creates a User in MongoDB to track
-//         their usage
+//         This method updates a User in MongoDB to have
+//         more available draft playlists
 UserRouter.put("/:userID/addDrafts", async (req, res) => {
     try {
         await userAddDrafts(req, res)
@@ -42,8 +44,8 @@ UserRouter.put("/:userID/addDrafts", async (req, res) => {
 })
 
 // method: PUT
-//         This method creates a User in MongoDB to track
-//         their usage
+//         This method updates a User in MongoDB to have
+//         more available published playlists
 UserRouter.put("/:userID/addPublished", async (req, res) => {
     try {
         await userAddPublished(req, res)
@@ -58,6 +60,29 @@ UserRouter.put("/:userID/addPublished", async (req, res) => {
 UserRouter.post("/:userID/playlist", async (req, res) => {
     try {
         await createPlaylist(req, res)
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+})
+
+// method: PUT
+//         This method updates a draft Playlist in MongoDB
+//         and to include new songs
+UserRouter.put("/:userID/playlist/:playlistID/addSongs", async (req, res) => {
+    try {
+        await playlistAddSongs(req, res)
+    } catch (err) {
+        res.status(500).send(err);
+    }
+})
+
+// method: PUT
+//         This method updates a draft Playlist in MongoDB
+//         and to have a new name
+UserRouter.put("/:userID/playlist/:playlistID/changeName", async (req, res) => {
+    try {
+        await playlistChangeName(req, res)
     } catch (err) {
         res.status(500).send(err);
     }

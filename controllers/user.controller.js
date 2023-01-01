@@ -1,5 +1,5 @@
 const User = require("../models/User").model;
-const Playlist = require("../models/Playlist").model;
+//const Playlist = require("../models/Playlist").model;
 
 const createUser = async (req, res) => {
     const spotify_email = req.body.spotify_email;
@@ -32,7 +32,7 @@ const userAddDrafts = async (req, res) => {
 
             res.status(200).send();
         } else {
-            res.status(404).send("No increment specified.");
+            res.status(400).send("No increment specified.");
         }
     } else {
         res.status(404).send("No user found.");
@@ -48,7 +48,7 @@ const userAddPublished = async (req, res) => {
 
             res.status(200).send();
         } else {
-            res.status(404).send("No increment specified.");
+            res.status(400).send("No increment specified.");
         }
     } else {
         res.status(404).send("No user found.");
@@ -59,19 +59,63 @@ const createPlaylist = async (req, res) => {
     let user = await User.findById(req.params.userID);
     if(user) {
         if(user.draft_count < user.permitted_drafts) {
-            const playlist = new Playlist();
-            await playlist.save();
-
-            user.drafts.push(playlist);
+            user.drafts.push({});
             user.draft_count += 1;
             await user.save();
 
-            res.status(201).send(playlist);
+            res.status(201).send(user.drafts[user.drafts.length - 1]);
         } else {
             res.status(403).send("User has no drafts remaining.");
         }
     } else {
         res.status(404).send("No user found.");
+    }
+}
+
+const playlistAddSongs = async (req, res) => {
+    if(req.body.songs) {
+        let user = await User.findById(req.params.userID);
+        if(user) {
+            let playlistIndex = user.drafts.findIndex(draft => {
+                return draft._id == req.params.playlistID
+            });
+            if(playlistIndex > -1) {
+                user.drafts[playlistIndex].songs = 
+                    [...user.drafts[playlistIndex].songs, ...req.body.songs]
+                await user.save();
+
+                res.status(200).send(user)
+            } else {
+                res.status(404).send("No playlist found.");
+            }
+        } else {
+            res.status(404).send("No user found.");
+        }
+    } else {
+        res.status(400).send("No new songs provided.");
+    }
+}
+
+const playlistChangeName = async (req, res) => {
+    if(req.body.name) {
+        let user = await User.findById(req.params.userID);
+        if(user) {
+            let playlistIndex = user.drafts.findIndex(draft => {
+                return draft._id == req.params.playlistID
+            });
+            if(playlistIndex > -1) {
+                user.drafts[playlistIndex].name = req.body.name;
+                await user.save();
+
+                res.status(200).send(user)
+            } else {
+                res.status(404).send("No playlist found.");
+            }
+        } else {
+            res.status(404).send("No user found.");
+        }
+    } else {
+        res.status(400).send("No new name provided.");
     }
 }
 
@@ -81,4 +125,6 @@ module.exports = {
     userAddDrafts,
     userAddPublished,
     createPlaylist,
+    playlistAddSongs,
+    playlistChangeName,
 }
