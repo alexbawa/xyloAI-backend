@@ -62,7 +62,6 @@ UserRouter.post("/:userID/playlist", async (req, res) => {
     try {
         await createPlaylist(req, res)
     } catch (err) {
-        console.log(err);
         res.status(500).send(err);
     }
 })
@@ -96,7 +95,6 @@ UserRouter.put("/:userID/playlist/:playlistID/publish", async (req, res) => {
     try {
         await publishPlaylist(req, res)
     } catch (err) {
-        console.log(err);
         res.status(500).send(err);
     }
 })
