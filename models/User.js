@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Playlist = require("./Playlist").schema;
 
-
 const MAX_FREE_DRAFTS = 2;
 const MAX_FREE_PUBLISHED = 1;
 
