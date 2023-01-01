@@ -120,29 +120,34 @@ const playlistChangeName = async (req, res) => {
 }
 
 const publishPlaylist = async (req, res) => {
-    let user = await User.findById(req.params.userID);
-    if(user) {
-        if(user.published_count < user.permitted_published) {
-            let playlistIndex = user.drafts.findIndex(draft => {
-                return draft._id == req.params.playlistID
-            });
-            if(playlistIndex > -1) {
-                publishToSpotify(user.drafts[playlistIndex]);
+    if(req.body.spotifyToken) {
+        let user = await User.findById(req.params.userID);
+        if(user) {
+            if(user.published_count < user.permitted_published) {
+                let playlistIndex = user.drafts.findIndex(draft => {
+                    return draft._id == req.params.playlistID
+                });
+                if(playlistIndex > -1) {
+                    let playlist = await publishToSpotify(req.body.spotifyToken, user.drafts[playlistIndex]);
 
-                user.drafts.splice(playlistIndex);
-                user.published_count += 1;
-                await user.save();
-    
-                res.status(200).send();
+                    user.drafts.splice(playlistIndex);
+                    user.published_count += 1;
+                    await user.save();
+        
+                    res.status(200).send(playlist);
+                } else {
+                    res.status(404).send("No playlist found.");
+                }
             } else {
-                res.status(404).send("No playlist found.");
+                res.status(403).send("User has no published remaining.");
             }
         } else {
-            res.status(403).send("User has no published remaining.");
+            res.status(404).send("No user found.");
         }
     } else {
-        res.status(404).send("No user found.");
+        res.status(401).send("No Spotify authentication provided.")
     }
+    
 }
 
 module.exports = {
